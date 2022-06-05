@@ -1,14 +1,16 @@
+
+  
 import { useState } from "react";
 import { Button, Columns, Form, Icon } from "react-bulma-components";
 import { useAuth } from "../hooks/useAuth";
 import { useMessagesContext } from "../hooks/MessagesContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { DalyviaiApi } from "../services/dalyviai-api";
+import { MokiniaiApi } from "../services/mokiniai-api";
 import { validateEmail } from "../services/validation";
 import { setFirstnameError, setLastnameError, setEmailError, setBirth_dateError } from "../services/dalyvioValidacija";
 
-export const AddDalyvis = ({ onAdded }) => {
+export const AddMokinis = ({ onAdded }) => {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [email, setEmail] = useState('');
@@ -65,20 +67,20 @@ export const AddDalyvis = ({ onAdded }) => {
             return;
         }
 
-        const dalyvioMetai = new Date(birth_date).getFullYear();
-        console.log(dalyvioMetai);
+        const mokinioMetai = new Date(birth_date).getFullYear();
+        console.log(mokinioMetai);
         console.log(new Date(birth_date).toLocaleDateString());
-        if (dalyvioMetai < 1900) {
+        if (mokinioMetai < 1940) {
             addMessage("Pasitikrinkite, ar gerai įrašėte gimimo datą. Formatas YYYY-MM-DD.");
             setBirth_dateError(0, true);
             return;
         }
 
         const einamieji_metai = new Date().getFullYear();
-        const amzius = einamieji_metai - dalyvioMetai;
+        const amzius = einamieji_metai - mokinioMetai;
 
         if (amzius < 18) {
-            addMessage("Dalyviai turi būti pilnamečiai.");
+            addMessage("Mokiniai turi būti pilnamečiai.");
             setBirth_dateError(0, true);
             return;
         }
@@ -86,18 +88,18 @@ export const AddDalyvis = ({ onAdded }) => {
         setBirth_dateError(0, false);
 
         try {
-            const dalyvis = {
+            const mokinis = {
                 firstname,
                 lastname,
                 email,
                 birth_date
             };
-            const result = await DalyviaiApi.addDalyviai(dalyvis, token);
+            const result = await MokiniaiApi.addMokiniai(mokinis, token);
 
             if (result.error) {
-                throw new Error(dalyvis.error);
+                throw new Error(mokinis.error);
             }
-            addMessage("Dalyvis pridėtas.");
+            addMessage("Mokinis pridėtas.");
 
             onAdded();
         } catch (error) {
@@ -165,3 +167,4 @@ export const AddDalyvis = ({ onAdded }) => {
 
     )
 };
+
